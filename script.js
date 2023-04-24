@@ -1,6 +1,6 @@
 console.log("Helloworld");
 
-// function getData() {
+// function getDataFromAPI() {
 //   document.getElementById("loader").style.display = "block";
 
 //   fetch("https://gauravgitacc.github.io/postAppData/auctionData.json")
@@ -21,7 +21,8 @@ console.log("Helloworld");
 //     }).catch((err) => {});
 // }
 var arr = [];
-async function getData() {
+
+async function getDataFromAPI() {
   document.getElementById("loader").style.display = "block";
   console.log("Fetching Data...");
 
@@ -30,9 +31,12 @@ async function getData() {
       "https://gauravgitacc.github.io/postAppData/auctionData.json"
     );
     arr = await response.json();
+    sessionStorage.setItem("myArr", JSON.stringify(arr));
+    // alert("Added to Session Storage");
     if (arr) {
       console.log("data", arr);
       showData(arr);
+
       document.getElementById("loader").style.display = "none";
     }
   } catch (e) {
@@ -40,7 +44,16 @@ async function getData() {
   }
 }
 
-getData();
+if (sessionStorage.getItem("myArr")) {
+  // user is coming again in the session
+  //   alert("Getting from Session Storage");
+  var myArr = JSON.parse(sessionStorage.getItem("myArr"));
+  showData(myArr);
+  arr = myArr;
+} else {
+  // user is coming to the session for the very first time
+  getDataFromAPI();
+}
 
 document.getElementById("search").addEventListener("input", () => {
   var newArr = arr.filter((item) =>
@@ -83,7 +96,7 @@ function showData(myArr) {
   document.getElementById("container").innerHTML = innerHtml;
 }
 
-// document.getElementById("btn").addEventListener("click", getData);
+// document.getElementById("btn").addEventListener("click", getDataFromAPI);
 
 // if (condition1) {
 //   // dothis1
@@ -96,3 +109,7 @@ function showData(myArr) {
 // }
 
 // condition1 ? "dothis1" : condition2 ? "dothis2" : "dothis3";
+
+// The user comes to the website ->
+// 1. Is the user coming for the first time in the session -> get the data from thr api and sotr it in the session
+// 2. Is the user coming again -> get the data from the storage and not the api.
